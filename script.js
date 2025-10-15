@@ -25,7 +25,7 @@ const puppy = {
   width: 60,
   height: 60,
   dy: 0,
-  gravity: 0.4,
+  gravity: 0.9,
   jumpPower: -8,
 };
 
