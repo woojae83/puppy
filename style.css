@@ -1,0 +1,21 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #f8e8b0;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+#gameCanvas {
+  display: block;
+  margin: 0 auto;
+  background-color: #f8e8b0;
+}
+
+#scoreBoard {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  font-size: 24px;
+  color: #4b2e05;
+  font-weight: bold;
+}
