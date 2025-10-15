@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Puppy Desert Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: linear-gradient(to bottom, #f9d29d, #f0b775);
+    }
+    canvas {
+      display: block;
+      margin: 0 auto;
+      background: #f5deb3;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="800" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let puppy = { x: 50, y: 300, size: 40, dy: 0 };
+    let foods = [];
+    let obstacles = [];
+    let score = 0;
+    let gravity = 0.5;
+    let jumpPower = -10;
+    let gameOver = false;
+
+    document.addEventListener('keydown', e => {
+      if (e.code === 'Space' && puppy.y >= 300) {
+        puppy.dy = jumpPower;
+      }
+    });
+
+    function createFood() {
+      foods.push({ x: 800, y: 300 - Math.random() * 100, size: 20 });
+    }
+
+    function createObstacle() {
+      const type = Math.random() < 0.5 ? 'cactus' : 'camel';
+      obstacles.push({ x: 800, y: 320, size: type === 'cactus' ? 30 : 50, type });
+    }
+
+    function update() {
+      if (gameOver) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      puppy.dy += gravity;
+      puppy.y += puppy.dy;
+      if (puppy.y > 300) puppy.y = 300;
+
+      ctx.fillStyle = 'orange';
+      ctx.beginPath();
+      ctx.arc(puppy.x, puppy.y, puppy.size / 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      foods.forEach((food, i) => {
+        food.x -= 4;
+        ctx.fillStyle = 'yellow';
+        ctx.beginPath();
+        ctx.arc(food.x, food.y, food.size / 2, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (
+          Math.abs(food.x - puppy.x) < (puppy.size + food.size) / 2 &&
+          Math.abs(food.y - puppy.y) < (puppy.size + food.size) / 2
+        ) {
+          foods.splice(i, 1);
+          score++;
+        }
+      });
+
+      obstacles.forEach((obs, i) => {
+        obs.x -= 5;
+        ctx.fillStyle = obs.type === 'cactus' ? 'green' : 'brown';
+        ctx.fillRect(obs.x, obs.y - obs.size, obs.size, obs.size);
+
+        if (
+          Math.abs(obs.x - puppy.x) < (puppy.size + obs.size) / 2 &&
+          Math.abs(obs.y - puppy.y) < (puppy.size + obs.size) / 2
+        ) {
+          gameOver = true;
+        }
+      });
+
+      ctx.fillStyle = 'black';
+      ctx.font = '20px Arial';
+      ctx.fillText('Score: ' + score, 10, 30);
+
+      if (!gameOver) {
+        requestAnimationFrame(update);
+      } else {
+        ctx.fillStyle = 'red';
+        ctx.font = '40px Arial';
+        ctx.fillText('Game Over', 300, 200);
+      }
+    }
+
+    setInterval(createFood, 2000);
+    setInterval(createObstacle, 3000);
+    update();
+  </script>
+</body>
+</html>
